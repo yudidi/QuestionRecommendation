@@ -1,0 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>2行3列</title>
+<c:set var="base" value="${pageContext.request.contextPath}"></c:set>
+<link href="${base}/css/bootstrap.css" rel="stylesheet">
+<script src="${base}/js/jquery-3.2.1.js"></script>
+<script src="${base}/js/bootstrap.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h1>我的第一个 Bootstrap 页面</h1>
+			<p>重置窗口大小，查看响应式效果！</p>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+				<h3>Column 1</h3>
+				<p>学的不仅是技术，更是梦想！</p>
+				<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+			</div>
+			<div class="col-sm-4">
+				<h3>Column 2</h3>
+				<p>学的不仅是技术，更是梦想！</p>
+				<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+			</div>
+			<div class="col-sm-4">
+				<h3>Column 3</h3>
+				<p>学的不仅是技术，更是梦想！</p>
+				<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
