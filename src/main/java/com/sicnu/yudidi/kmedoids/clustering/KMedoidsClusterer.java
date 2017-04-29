@@ -18,7 +18,7 @@ public class KMedoidsClusterer {
 	private final static Logger log = Logger.getLogger(KMedoidsClusterer.class);
 
 	private int k; // 分类数量
-	private List<Record> allRecords; // 所有记录
+	private List<DataSetRecord> allRecords; // 所有记录
 	// private List<Integer> allRecordIds; // 所有记录的编号
 	private Cluster[] clusters; // 所有簇
 	private int maxIterations; // 最大迭代次数
@@ -31,7 +31,7 @@ public class KMedoidsClusterer {
 	 * @param allRecords 所有记录
 	 * @param maxIterations 最大迭代次数
 	 */
-	public KMedoidsClusterer(int k, List<Record> allRecords, int maxIterations) {
+	public KMedoidsClusterer(int k, List<DataSetRecord> allRecords, int maxIterations) {
 		super();
 		this.k = k;
 		this.allRecords = allRecords;
@@ -54,13 +54,13 @@ public class KMedoidsClusterer {
 		}
 	}
 
-	public Map<String, List<Record>> output() {
-		Map<String, List<Record>> output = new HashMap<>();
+	public Map<String, List<DataSetRecord>> output() {
+		Map<String, List<DataSetRecord>> output = new HashMap<>();
 		for (Cluster cluster : clusters) {
 			String clusterName = cluster.getClusterName();
-			for (Record record : cluster.getRecordsList()) {
+			for (DataSetRecord record : cluster.getRecordsList()) {
 				if (output.get(clusterName) == null) {
-					List<Record> records = new ArrayList<>();
+					List<DataSetRecord> records = new ArrayList<>();
 					records.add(record);
 					output.put(clusterName, records);
 				} else {
@@ -74,7 +74,7 @@ public class KMedoidsClusterer {
 	public void saveOutput() {
 		for (Cluster cluster : clusters) {
 			String clusterName = cluster.getClusterName();
-			for (Record record : cluster.getRecordsList()) {
+			for (DataSetRecord record : cluster.getRecordsList()) {
 			}
 		}
 	}
@@ -90,31 +90,31 @@ public class KMedoidsClusterer {
 		log.info("*******************************************");
 		log.info("");
 		log.info("");
-		List<Record> centralRecords = getRandomCentralRecords();
+		List<DataSetRecord> centralRecords = getRandomCentralRecords();
 		generateInitialClusters(centralRecords);
 		iterate();
 		printClustersInfo(Arrays.asList(clusters));
 	}
 
-	public List<Record> getRandomCentralRecords() {
-		Set<Record> centralRecords = new HashSet<>();
+	public List<DataSetRecord> getRandomCentralRecords() {
+		Set<DataSetRecord> centralRecords = new HashSet<>();
 		Random random = new Random();
 		while (centralRecords.size() != k) {
 			int r = random.nextInt(allRecords.size());
 			centralRecords.add(allRecords.get(r));
 		}
 		// log
-		for (Record record : centralRecords) {
+		for (DataSetRecord record : centralRecords) {
 			log.info(String.format("随机选中中心记录id:%d| 中心记录名字:%s| 用户数目:%d", record.getId(), record.getName(), record.getUsers().length));
 		}
-		return new ArrayList<Record>(centralRecords);
+		return new ArrayList<DataSetRecord>(centralRecords);
 	}
 
 	/**
 	 * 
 	 * @param centralRecords
 	 */
-	public void clustering(List<Record> centralRecords) {
+	public void clustering(List<DataSetRecord> centralRecords) {
 		log.info("");
 		log.info("");
 		log.info("*******************************************");
@@ -135,9 +135,9 @@ public class KMedoidsClusterer {
 	public void iterate() {
 		int count = 1;
 		List<Cluster> tmpClusters = new ArrayList<>(Arrays.asList(clusters));// 存放每次迭代后的临时簇
-		List<Record> lastCentralRecords = null; // 存放迭代后的中心记录
-		Record holdOldCenter = null; // 记录被替换的中心记录
-		Record holdNewCenter = null; // 记录新的中心记录
+		List<DataSetRecord> lastCentralRecords = null; // 存放迭代后的中心记录
+		DataSetRecord holdOldCenter = null; // 记录被替换的中心记录
+		DataSetRecord holdNewCenter = null; // 记录新的中心记录
 		int minCost; // 记录一种替换的总代价
 		while (true) {
 			printClustersInfo(tmpClusters);
@@ -150,11 +150,11 @@ public class KMedoidsClusterer {
 			}
 			// 所有的替代方案,选择代价最小的,形成新簇
 			for (int i = 0; i < allRecords.size(); i++) {
-				Record record = allRecords.get(i);
+				DataSetRecord record = allRecords.get(i);
 				for (int j = 0; j < lastCentralRecords.size(); j++) {
 					if (!lastCentralRecords.contains(record)) {
-						Record newCenter = record;
-						Record oldCenter = lastCentralRecords.get(j);
+						DataSetRecord newCenter = record;
+						DataSetRecord oldCenter = lastCentralRecords.get(j);
 						log.debug(String.format("使用非中心记录%s替代中心记录%s", newCenter.getInfo(), oldCenter.getInfo()));
 						int allCost = getCostSumOfOneReplace(newCenter, oldCenter, tmpClusters, lastCentralRecords);
 						log.debug(String.format("使用记录%s替代记录%s| 所有记录的变动总代价为:%d", newCenter.getInfo(), oldCenter.getInfo(), allCost));
@@ -173,7 +173,7 @@ public class KMedoidsClusterer {
 			}
 			log.info(String.format("使用记录%s替代记录%s的总代价:%d < 0,重新形成簇", holdNewCenter.getId(), holdOldCenter.getId(),minCost));
 			// 记录新的中心记录集合
-			List<Record> newCentralRecords = new ArrayList<>(lastCentralRecords);
+			List<DataSetRecord> newCentralRecords = new ArrayList<>(lastCentralRecords);
 			newCentralRecords.remove(holdOldCenter);
 			newCentralRecords.add(holdNewCenter);
 			// 清空临时簇中的所有记录
@@ -187,7 +187,7 @@ public class KMedoidsClusterer {
 			}
 			// 分配其他记录到临时簇
 			for (int i = 0; i < allRecords.size(); i++) {
-				Record record = allRecords.get(i);
+				DataSetRecord record = allRecords.get(i);
 				if (newCentralRecords.contains(record) == false) {// 非最新中心点
 					int belongCluster = 0;
 					int minDistance = Integer.MAX_VALUE;
@@ -221,7 +221,7 @@ public class KMedoidsClusterer {
 		for (Cluster cluster : tmpClusters) {
 			log.info(String.format("簇名:%s,中心点:%d,记录个数:%d", cluster.getClusterName(),cluster.getCentralRecord().getId(),cluster.getRecordsList().size()));
 			StringBuffer recordIds = new StringBuffer();
-			for (Record record : cluster.getRecordsList()) {
+			for (DataSetRecord record : cluster.getRecordsList()) {
 				recordIds.append(record.getId()+",");
 			}
 			log.info(String.format("[%s]", recordIds.toString()));
@@ -242,14 +242,14 @@ public class KMedoidsClusterer {
 	 *            上次迭代结果的中心点集合
 	 * @return
 	 */
-	private int getCostSumOfOneReplace(Record newCenter, Record oldCenter, List<Cluster> tmpClusters, List<Record> lastCentralRecords) {
-		List<Record> newCentralRecords = new ArrayList<>(lastCentralRecords);
+	private int getCostSumOfOneReplace(DataSetRecord newCenter, DataSetRecord oldCenter, List<Cluster> tmpClusters, List<DataSetRecord> lastCentralRecords) {
+		List<DataSetRecord> newCentralRecords = new ArrayList<>(lastCentralRecords);
 		newCentralRecords.remove(oldCenter);
 		newCentralRecords.add(newCenter);
 		int costSum = 0;
 		// 计算所有点变动前后,到该点变动前后所靠近的中心点的距离的变动值.
 		for (Cluster cluster : tmpClusters) {
-			for (Record record : cluster.getRecordsList()) {
+			for (DataSetRecord record : cluster.getRecordsList()) {
 				String[] result = getMinDistance(record, newCentralRecords);
 				int newDistance = Integer.valueOf(result[0]); 
 				int oldDistance = queryDistanceMemo(record, cluster.getCentralRecord());
@@ -270,11 +270,11 @@ public class KMedoidsClusterer {
 	 *            当前的所有中心记录
 	 * @return
 	 */
-	private String[] getMinDistance(Record record, List<Record> centralRecords) {
+	private String[] getMinDistance(DataSetRecord record, List<DataSetRecord> centralRecords) {
 		String[] result = new String[2];
-	    Record nearLyCenter = null;
+	    DataSetRecord nearLyCenter = null;
 		int minDistance = Integer.MAX_VALUE;
-		for (Record centralRecord : centralRecords) {
+		for (DataSetRecord centralRecord : centralRecords) {
 			if (distancesMemo[record.getId()][centralRecord.getId()] == -1) {
 				distancesMemo[record.getId()][centralRecord.getId()] = record.calculateDistance(centralRecord);
 			}
@@ -293,7 +293,7 @@ public class KMedoidsClusterer {
 	 * 
 	 * @param centralRecords
 	 */
-	private void generateInitialClusters(List<Record> centralRecords) {
+	private void generateInitialClusters(List<DataSetRecord> centralRecords) {
 		// 将记录列表的相应记录标记为中心记录
 		for (int i = 0; i < allRecords.size(); i++) {
 			if (centralRecords.contains(allRecords.get(i))) {
@@ -308,7 +308,7 @@ public class KMedoidsClusterer {
 		}
 		// 分配记录给簇
 		for (int i = 0; i < allRecords.size(); i++) {
-			Record record = allRecords.get(i);
+			DataSetRecord record = allRecords.get(i);
 			if (!record.isMedoid()) {
 				int belongCluster = 0;
 				int minDistance = Integer.MAX_VALUE;
@@ -331,7 +331,7 @@ public class KMedoidsClusterer {
 	 * @param record2
 	 * @return
 	 */
-	public int queryDistanceMemo(Record record1, Record record2) {
+	public int queryDistanceMemo(DataSetRecord record1, DataSetRecord record2) {
 		if (distancesMemo[record1.getId()][record2.getId()] == -1) {
 			distancesMemo[record1.getId()][record2.getId()] = record1.calculateDistance(record2);
 		}

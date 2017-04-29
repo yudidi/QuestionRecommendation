@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Cluster {
 	private String clusterName; //簇名
-	private Record centralRecord; //簇的中心记录
-	private List<Record> recordsList = new ArrayList<>(); //簇中包含的记录列表
+	private DataSetRecord centralRecord; //簇的中心记录
+	private List<DataSetRecord> recordsList = new ArrayList<>(); //簇中包含的记录列表
 	
 	public Cluster() {
 	}
@@ -16,13 +16,13 @@ public class Cluster {
 		this.clusterName = clusterName;
 	}
 
-	public Cluster(String clusterName, List<Record> recordsList) {
+	public Cluster(String clusterName, List<DataSetRecord> recordsList) {
 		super();
 		this.clusterName = clusterName;
 		this.recordsList = recordsList;
 	}
 	
-	public void addRecord(Record record) {
+	public void addRecord(DataSetRecord record) {
 		recordsList.add(record);
 	}
 
@@ -30,11 +30,11 @@ public class Cluster {
 		recordsList.clear();
 	}
 
-	public Record getCentralRecord() {
+	public DataSetRecord getCentralRecord() {
 		return centralRecord;
 	}
 
-	public void setCentralRecord(Record centralRecord) {
+	public void setCentralRecord(DataSetRecord centralRecord) {
 		this.centralRecord = centralRecord;
 	}
 
@@ -47,11 +47,11 @@ public class Cluster {
 		this.clusterName = clusterName;
 	}
 
-	public List<Record> getRecordsList() {
+	public List<DataSetRecord> getRecordsList() {
 		return recordsList;
 	}
 
-	public void setRecordsList(List<Record> recordsList) {
+	public void setRecordsList(List<DataSetRecord> recordsList) {
 		this.recordsList = recordsList;
 	}
 

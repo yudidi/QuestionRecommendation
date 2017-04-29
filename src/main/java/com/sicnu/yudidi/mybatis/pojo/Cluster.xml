@@ -5,8 +5,20 @@
 
 <mapper namespace="com/sicnu/yudidi/mybatis/pojo/Cluster">
 
-	<select id="list_k_clusters" parameterType="string" resultType="Cluster">
-		select * from clusters
+	<select id="list_all_order_by_cluster_name_desc" resultType="Cluster">
+		select * from clusters ORDER by cluster_name DESC
 	</select>
+	
+	<select id="count_all_clusters" resultType="int">
+		select count(*) from clusters
+	</select>
+	
+	<select id="check_exsitance_cluster" parameterType="string" resultType="_int">
+		select count(*) from clusters where cluster_name= #{cluster_name}
+	</select>
+	
+	<insert id="add_clusters" parameterType="Cluster">
+		insert into clusters ( cluster_name, subject_id_join ) values (#{cluster_name},#{subject_id_join})
+	</insert>
 	
 </mapper>

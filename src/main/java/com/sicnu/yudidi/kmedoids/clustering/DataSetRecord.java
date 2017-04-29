@@ -1,13 +1,13 @@
 package com.sicnu.yudidi.kmedoids.clustering;
 
-public class Record {
+public class DataSetRecord {
 
 	private boolean isMedoid = false; // 是否是中心记录
 	private int id; // 记录的编号 //方便矩阵中查找相异度
 	private int[] users; // 参与讨论的用户id列表
 	private String name; // 记录的名字,比如某个题目的id
 
-	public Record(int id, String recordName, int[] users) {
+	public DataSetRecord(int id, String recordName, int[] users) {
 		super();
 		this.id = id;
 		this.users = users;
@@ -20,7 +20,7 @@ public class Record {
 	 * @param record
 	 * @return 1000 - maxLen
 	 */
-	public int calculateDistance(Record record) {
+	public int calculateDistance(DataSetRecord record) {
 		int[] s1 = users;
 		int[] s2 = record.users;
 		int maxLen = 0;
@@ -59,7 +59,7 @@ public class Record {
 
 	@Override
 	public boolean equals(Object obj) {
-		return ((Record) obj).getId() == this.id;
+		return ((DataSetRecord) obj).getId() == this.id;
 	}
 
 	@Override

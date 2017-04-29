@@ -3,8 +3,14 @@ package com.sicnu.yudidi.mybatis.pojo;
 public class Record {
 	private String subjectId;
 	private String subjectTitle;
-	private String answersIdList;//join by ","
+	private String answersIdList; //join by ","
 	
+	public Record(String subjectId, String subjectTitle, String answersIdList) {
+		super();
+		this.subjectId = subjectId;
+		this.subjectTitle = subjectTitle;
+		this.answersIdList = answersIdList;
+	}
 	public String getSubjectId() {
 		return subjectId;
 	}
