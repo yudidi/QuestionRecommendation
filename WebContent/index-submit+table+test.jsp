@@ -83,12 +83,12 @@
 			</div>
 			<div class="col-xs-1 col-sm-2 col-md-4"></div>
 		</div>
-		<!-- <div style="height: 2em"></div> -->
-		<div class="row" style="background-image: url('https://img.alicdn.com/tps/TB196ogPXXXXXXHXVXXXXXXXXXX-2880-1080.jpg');">
+		<div style="height: 2em"></div>
+		<div class="row">
 			<div class="col-xs-1 col-sm-2 col-md-2"></div>
 			<div class="col-xs-10 col-sm-8 col-md-8">
 				<table id="example" class="display" cellspacing="0" width="100%">
-					<thead class="" id="jumbotron">
+					<thead class="jumbotron">
 						<tr>
 							<th>推荐的题目</th>
 						</tr>
@@ -100,28 +100,19 @@
 	</div>
 
 	<script type="text/javascript" charset="utf-8">
-	
 		$(document).ready(function() {
 			$('#example').DataTable({
-				"dom" : '<fl<t>ip>'
-			});
-		});
-
-		function submit() {
-			var uid = $("#myinput").val();
-			$('#example').DataTable({
-				"destroy": true, 
 				ajax : {
 					type : 'post',
 					url : '${base}/recommend',
-					data : {"uid":uid},
+					data : {uid:"2736253"},
 					contentType: "application/x-www-form-urlencoded; charset=utf-8"
 				},
 				"columns" : [ {
 					"data" : "subject"
 				}, ]
 			});
-		}
+		});
 	</script>
 
 </body>
