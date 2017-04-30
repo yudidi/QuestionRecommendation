@@ -3,6 +3,8 @@ package com.sicnu.yudidi.mybatis.pojo;
 public class Cluster {
 	private String cluster_name;
 	private String subject_id_join;
+	public Cluster() {
+	}
 	public Cluster(String cluster_name, String subject_id_join) {
 		super();
 		this.cluster_name = cluster_name;

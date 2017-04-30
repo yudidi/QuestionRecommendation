@@ -5,6 +5,9 @@ public class Record {
 	private String subjectTitle;
 	private String answersIdList; //join by ","
 	
+	public Record() {
+	}
+	
 	public Record(String subjectId, String subjectTitle, String answersIdList) {
 		super();
 		this.subjectId = subjectId;

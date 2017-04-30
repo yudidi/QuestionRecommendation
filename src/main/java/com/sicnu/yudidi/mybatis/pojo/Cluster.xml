@@ -3,10 +3,14 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com/sicnu/yudidi/mybatis/pojo/Cluster">
+<mapper namespace="com/sicnu/yudidi/mybatis/pojo">
+
+	<select id="list_clusters" resultType="Cluster">
+		select * from clusters
+	</select>
 
 	<select id="list_all_order_by_cluster_name_desc" resultType="Cluster">
-		select * from clusters ORDER by cluster_name DESC
+		select * from clusters order by cluster_name desc
 	</select>
 	
 	<select id="count_all_clusters" resultType="int">

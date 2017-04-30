@@ -1,8 +1,6 @@
 package com.sicnu.yudidi.utils.crawler;
 
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /*
  * # todo
