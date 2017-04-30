@@ -3,20 +3,29 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com/sicnu/yudidi/mybatis/pojo/Record">
+<mapper namespace="com/sicnu/yudidi/mybatis/pojo">
 
 	<select id="list_all_records" resultType="Record">
 		select * from records
 	</select>
-	
+
+	<resultMap id="getAllRecords" type="java.util.HashMap">
+		<result property="key" column="subject_id" />
+		<result property="value" column="title" />
+	</resultMap>
+
+	<select id="get_map_id_and_title" resultMap="getAllRecords">
+		select subject_id, SUBSTRING_INDEX(subject_title,']',-1) as title from records
+	</select>
+
 	<select id="count_all" resultType="int">
 		select count(*) from records
 	</select>
-	
+
 	<select id="check_exsitance" parameterType="string" resultType="_int">
 		select count(*) from records where subject_id= #{subject_id}
 	</select>
-	
+
 	<insert id="add_record" parameterType="Record">
 		insert into records ( subject_id, subject_title, subject_answers_id_join ) values (#{subjectId},#{subjectTitle},#{answersIdList})
 	</insert>

@@ -13,38 +13,29 @@
 <script type="text/javascript" charset="utf8" src="${base}/js/jquery-3.2.1.js"></script>
 <!-- DataTables js -->
 <script type="text/javascript" charset="utf8" src="${base}/js/DataTables-1.10.15/jquery.dataTables.js"></script>
-
 </head>
 
-<table id="example" class="display cell-border" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Extn.</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Extn.</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </tfoot>
-    </table>
+<table id="example" class="display" cellspacing="0" width="100%">
+	<thead>
+		<tr>
+			<th>题目</th>
+		</tr>
+	</thead>
+	</table>
+<!-- 	<a href="url">title</a>
+ -->
 
 <script type="text/javascript" charset="utf-8">
-		$(document).ready(function() {
-		    $('#example').DataTable( {
-		        "ajax": '${base}/recommend',
-		        "dom": '<f<t>ip>'
-		    } );
-		} );
+	$(document).ready(function() {
+		$('#example').DataTable({
+			ajax: {
+                url: '${base}/recommend',
+                contentType: "application/x-www-form-urlencoded; charset=utf-8"
+            },
+			 "columns": [
+	             { "data": "subject" },
+		    ]
+		});
+	});
 </script>
 </html>

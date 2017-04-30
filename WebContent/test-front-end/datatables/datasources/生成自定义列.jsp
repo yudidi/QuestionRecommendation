@@ -16,35 +16,30 @@
 </head>
 
 <table id="example" class="display" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Extn.</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Extn.</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </tfoot>
-    </table>
+	<thead>
+		<tr>
+			<th>题目</th>
+		</tr>
+	</thead>
+</table>
 
 <script type="text/javascript" charset="utf-8">
 	$(document).ready(function() {
 		$(document).ready(function() {
-		    $('#example').DataTable( {
-		        "ajax": '${base}/recommend'
-		    } );
-		} );
+			$('#example').DataTable({
+				"ajax" : '${base}/recommend',
+				"columnDefs" : [ {
+					"targets" : -1,
+					"data" : null,
+					"defaultContent" : "<button>做题</button>"
+				} ]
+			});
+
+			$('#example tbody').on('click', 'button', function() {
+				var data = table.row($(this).parents('tr')).data();
+				alert(data[0]);
+			});
+		});
 	});
 </script>
 </html>
