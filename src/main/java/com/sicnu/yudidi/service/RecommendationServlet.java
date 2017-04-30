@@ -14,11 +14,13 @@ import com.alibaba.fastjson.JSONObject;
 public class RecommendationServlet extends HttpServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("utf-8");
 		resp.setCharacterEncoding("UTF-8");
 		req.setCharacterEncoding("UTF-8");
 		String userId = req.getParameter("uid");
 		Writer writer = resp.getWriter();
-		writer.write(Recommendation.generateJson(userId));
+		String json = Recommendation.generateJson(userId);
+		 writer.write(json);
 	}
 }
