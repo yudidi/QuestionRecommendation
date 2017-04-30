@@ -58,7 +58,7 @@ public class Recommendation {
 			e.printStackTrace();
 			log.error("ClusterDao查询数据库失败");
 		}
-		List<String> passedSubjectIdList = new ArrayList<>(getPassedSubjectIdSet(nowcoderId));
+		List<String> passedSubjectIdList = getPassedSubjectIdList(nowcoderId);
 		Map<Integer, List<String>> map = new HashMap<>();
 		for (int i = 0; i < clusters.size(); i++) {
 			List<String> oneClusterSubjectList = Arrays.asList(clusters.get(i).getSubject_id_join().split(","));
@@ -107,7 +107,6 @@ public class Recommendation {
 		}
 		return recommendedSubjectIdList;
 	}
-
 	
 	public static String generateJsonByRecommendSubject(List<String> recommendedList) {
 		RecordDao recordDao = new RecordDao();
@@ -149,16 +148,11 @@ public class Recommendation {
 		return trs.size() >= RecommendationConfig.MIN_ANSWERED_COUNT ? true : false;
 	}
 
-	// 抓取去重后的所有刷题记录
-	public static Set<String> getPassedSubjectIdSet(String userId) {
-		List<String> subjectIdsTotal = getPassedSubjectIdList(userId);
-		log.info(String.format("用户%s答题总数%d,%s", userId, subjectIdsTotal.size(),subjectIdsTotal));
-		Set<String> set = new HashSet<>(subjectIdsTotal);
-		log.info(String.format("用户%s去重后答题总数%d,%s", userId, set.size(),set));
-		return set;
-	}
-
-	// 抓取该用户所有答题记录,未去重,subject_id-list
+	/**
+	 * 获取用户所有答题记录subject-id-list,已经去重
+	 * @param userId
+	 * @return
+	 */
 	public static List<String> getPassedSubjectIdList(String userId) {
 		List<String> subjectIdsTotal = new ArrayList<>();
 		int page = 1;
@@ -167,16 +161,14 @@ public class Recommendation {
 			List<String> subjectIdsOfOnePage = new ArrayList<>(getSubjectIdsOfOnePage(url));
 			log.debug(String.format("获取url%s中获取subject-id-list", url,subjectIdsOfOnePage));
 			if (subjectIdsOfOnePage.size() == 0) {
+				log.debug(String.format("用户答题记录爬取完毕,最后一页是:%s,最后一页题目数:%d", url, subjectIdsOfOnePage.size()));
 				break;
 			}
 			subjectIdsTotal.addAll(subjectIdsOfOnePage);
 			log.debug(String.format("codeBooks|页面%d|提取完毕|:%s", page, url));
-			if (subjectIdsOfOnePage.size() < 10) {
-				log.debug(String.format("用户答题记录爬取完毕,最后一页是:%s,最后一页题目数:%d", url, subjectIdsOfOnePage.size()));
-				break;
-			}
 			page++;
 		}
+		log.info(String.format("用户%s答题总数%d,%s", userId, subjectIdsTotal.size(),subjectIdsTotal));
 		return subjectIdsTotal;
 	}
 
@@ -204,9 +196,12 @@ public class Recommendation {
 			do {
 				doc = CrawlerWithCookies.getPageContent(subMissionIdUrl, "get");
 			} while (doc == null);
-			String subjectUrl = doc.select("div.result-subject-item a.continue-challenge").attr("href");
+			String subjectUrl = doc.select("a.continue-challenge").attr("href");
+			if (subjectUrl == null) {
+				log.debug(String.format("extractSubjectId失败,不能定位subjectUrl,", subMissionIdUrl));
+			}
 			String subjectId = subjectUrl.substring(subjectUrl.lastIndexOf("/") + 1);
-			log.debug(String.format("根据subMission:%s获取subjectject-url:%s|subject-id:%s",subMissionIdUrl,subjectUrl,subjectId));
+			log.debug(String.format("根据subMissionIdUrl:%s获取subjectject-url:%s|subject-id:%s",subMissionIdUrl,subjectUrl,subjectId));
 			return subjectId;
 		}
 }

@@ -26,8 +26,10 @@ public class CrawlerWithCookies extends CrawlerBase {
 			doc = method.equals("get") ? conn.get() : conn.post();
 		} catch (IOException e) {
 			e.printStackTrace();
+			log.debug("getPageContent失败");
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.debug("getPageContent失败");
 		}
 		return doc;
 	}
