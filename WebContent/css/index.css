@@ -1,0 +1,47 @@
+@CHARSET "UTF-8";
+#submit:HOVER {
+	background-color: cornflowerblue;
+}
+/* header 小屏调整位置 */
+@media screen and (max-width: 448px) {
+    #header {
+    	padding: 1em 0 5em 0 !important;
+    }
+}
+/* header 大屏 */
+/* header背景 */
+#header {
+	padding: 5em 0 6em 0;
+	background-color: #4686a0;
+	color: rgba(255, 255, 255, 0.75);
+	background-attachment: fixed, fixed, fixed;
+	background-image: url("../img/backgroud/overlay2.png"),
+		url("../img/backgroud/overlay3.svg"),
+		linear-gradient(45deg, #9dc66b 5%, #4fa49a 30%, #4361c2);
+	background-position: top left, center center, center center;
+	background-size: auto, cover, cover;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+}
+}
+#header {
+	padding: 5em 0 5em 0;
+}
+
+/* 输入框的高度 */
+#myinput {
+	height: 60px;
+	/* padding-left: 50px;  框内提示的文字左移50px; */
+}
+
+/* header各部分的距离调整 */
+#header h1 {
+	margin: 0 0 1 em 0;
+	!
+	important;
+}
+
+#header img.cloud {
+	margin: -3em 0 -2em 0;
+}

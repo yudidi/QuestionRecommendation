@@ -4,65 +4,102 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title></title>
 <c:set var="base" value="${pageContext.request.contextPath}"></c:set>
 <link href="${base}/css/bootstrap.css" rel="stylesheet">
-<script src="${base}/js/jquery-3.2.1.js"></script>
+<!-- jQuery  -->
+<script type="text/javascript" charset="utf8" src="${base}/js/jquery-3.2.1.js"></script>
 <script src="${base}/js/bootstrap.js"></script>
 
-<!-- 1.引入文件: 引入这些文件至 <head> 中 -->
-<!--[if lte IE 8]><link rel="stylesheet" href="${base}/css/nav/responsive-nav.css"><![endif]-->
-<!--[if gt IE 8]><!-->
-<link rel="stylesheet" href="${base}/css/nav/styles.css">
-<!--<![endif]-->
-<script src="${base}/js/nav/responsive-nav.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="${base}/css/DataTables-1.10.15/jquery.dataTables.css">
+<!-- DataTables js -->
+<script type="text/javascript" charset="utf8" src="${base}/js/DataTables-1.10.15/jquery.dataTables.js"></script>
+
+<!-- JQuery validate js -->
+<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+<!-- Header CSS -->
+<link href="${base}/css/index.css" rel="stylesheet">
+
+<script type="text/javascript">
+	function submit() {
+		alert(this.Text);
+	}
+</script>
+
+<style type="text/css">
+/* dataTables表头居中 */
+#example>thead:first-child>tr:first-child>th {
+	text-align: center;
+}
+
+/* 红色提示信息 */
+.warning {
+	color: red;
+}
+</style>
 
 </head>
 <body>
-	<div role="navigation" id="foo" class="nav-collapse">
-		<ul>
-			<li class="active"><a href="#">Home</a></li>
-			<li><a href="#">About</a></li>
-			<li><a href="#">Projects</a></li>
-			<li><a href="#">Blog</a></li>
-		</ul>
-	</div>
-	<div role="main" class="main">
-		<div class="container">
-			<div class="row">
-				<a href="#nav" class="nav-toggle">Menu</a>
-			</div>
-			<!-- Bootstrap 超大屏幕（Jumbotron） -->
-			<div class="row jumbotron">
-				<h1>我的第一个 Bootstrap 页面</h1>
-				<p>拖动窗口,查看改变</p>
-			</div>
-			<div class="row">
-				<div class="col-sm-4">
-					<h3>第一列</h3>
-					<p>学的不仅是技术，更是梦想！</p>
-					<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
-				</div>
-				<div class="col-sm-4">
-					<h3>第二列</h3>
-					<p>学的不仅是技术，更是梦想！</p>
-					<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
-				</div>
-				<div class="col-sm-4">
-					<h3>第三列</h3>
-					<p>学的不仅是技术，更是梦想！</p>
-					<p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+	<div class="container-fluid">
+		<div id="header" class="row">
+			<div class="col-xs-1 col-sm-2 col-md-4"></div>
+			<div class="inner col-xs-10 col-sm-8 col-md-4">
+				<img class="cloud" alt="白云" src="img/backgroud/cloud.png">
+				<h1>
+					Hi nowcoder, I'll serve you <br>
+				</h1>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> <input id="myinput" type="text" class="form-control input-lg" placeholder="Input your nowcoder ID:5933350"> <span id="submit" onclick="submit(this)" class="input-group-addon"> <i
+						class="glyphicon glyphicon-circle-arrow-right"
+					></i>
+					</span>
 				</div>
 			</div>
+			<div class="col-xs-1 col-sm-2 col-md-4"></div>
 		</div>
+		<div class="row">
+			<div class="col-xs-1 col-sm-2 col-md-3"></div>
+			<div class="col-xs-10 col-sm-8 col-md-6">
+				<table id="example" class="display" cellspacing="0" width="100%">
+					<thead class="" id="jumbotron">
+						<tr>
+							<th>Recommendation Results</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="col-xs-1 col-sm-2 col-md-3"></div>
+		</div>
+		<div style="height: 2em"></div>
 	</div>
-	<!-- 3.启动此插件:将下面这段代码放置在 </body> 之前 -->
-	<script>
-		var navigation = responsiveNav("foo", {
-			customToggle : ".nav-toggle"
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+			$('#example').DataTable({
+				"dom" : '<<t>i>'
+			});
 		});
+		function submit() {
+			$('#example')
+					.DataTable(
+							{
+								"destroy" : true,
+								"dom" : '<<t>ip>',
+								ajax : {
+									type : 'post',
+									url : '${base}/recommend',
+									data : {
+										"uid" : $("#myinput").val()
+									},
+									contentType : "application/x-www-form-urlencoded; charset=utf-8"
+								},
+								"columns" : [ {
+									"data" : "subject"
+								}, ]
+							});
+		}
 	</script>
+
 </body>
 </html>

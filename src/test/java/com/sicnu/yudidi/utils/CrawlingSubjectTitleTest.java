@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.utils.crawler;
+package com.sicnu.yudidi.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
