@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.kmedoids.dataset;
+package com.sicnu.yudidi.crawler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,15 +17,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sicnu.yudidi.utils.crawler.CrawlerConfig;
-import com.sicnu.yudidi.utils.crawler.HTTPCommonUtil;
-
 /*
  * Single Thread.
  */
-public class Crawler {
+public class CrawlerOfEnties extends CrawlerBase{
 	
-	private static Logger log = Logger.getLogger(Crawler.class);
+	private static Logger log = Logger.getLogger(CrawlerOfEnties.class);
 	static Set<String> questionsUrls = new HashSet<String>();
 	
 	/**
@@ -47,7 +44,7 @@ public class Crawler {
 		boolean isFinish = false;
 		while (!isFinish) {
 			try {
-				HTTPCommonUtil.trustEveryone();
+				trustEveryone();
 				String url = CrawlerConfig.ENTRY.replace("${page}", ++page + "");
 				System.out.println("url : " + url);
 				Connection conn = HttpConnection.connect(url);

@@ -34,7 +34,7 @@
 }
 
 #header {
-	padding: 5em 0 8em 0;
+	padding: 5em 0 5em 0;
 }
 
 /* 输入框的高度 */
@@ -76,26 +76,26 @@
 					Hi nowcoder, I'll serve you <br>
 				</h1>
 				<div class="input-group">
-					<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> <input id="myinput" type="text" class="form-control input-lg" placeholder="请输入你在牛客网的ID"> <span id="submit" onclick="submit(this)" class="input-group-addon"><i
+					<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> <input id="myinput" type="text" class="form-control input-lg" placeholder="Input your nowcoder ID:5933350"> <span id="submit" onclick="submit(this)" class="input-group-addon"><i
 						class="glyphicon glyphicon-circle-arrow-right"
 					></i></span>
 				</div>
 			</div>
 			<div class="col-xs-1 col-sm-2 col-md-4"></div>
 		</div>
-		<!-- <div style="height: 2em"></div> -->
-		<div class="row" style="background-image: url('https://img.alicdn.com/tps/TB196ogPXXXXXXHXVXXXXXXXXXX-2880-1080.jpg');">
-			<div class="col-xs-1 col-sm-2 col-md-2"></div>
-			<div class="col-xs-10 col-sm-8 col-md-8">
+		<div style="height: 2em"></div>
+		<div class="row">
+			<div class="col-xs-1 col-sm-2 col-md-3"></div>
+			<div class="col-xs-10 col-sm-8 col-md-6">
 				<table id="example" class="display" cellspacing="0" width="100%">
 					<thead class="" id="jumbotron">
 						<tr>
-							<th>推荐的题目</th>
+							<th>Recommendation Results(<=3)</th>
 						</tr>
 					</thead>
 				</table>
 			</div>
-			<div class="col-xs-1 col-sm-2 col-md-2"></div>
+			<div class="col-xs-1 col-sm-2 col-md-3"></div>
 		</div>
 	</div>
 
@@ -109,6 +109,11 @@
 
 		function submit() {
 			var uid = $("#myinput").val();
+			var z= /^\d+$/;;
+			if(z.test(uid) == false){
+			   alert("不是数字");
+			   return;
+			};
 			$('#example').DataTable({
 				"destroy": true, 
 				ajax : {

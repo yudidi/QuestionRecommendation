@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.utils.crawler;
+package com.sicnu.yudidi.crawler;
 
 import java.nio.file.Paths;
 

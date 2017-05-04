@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.utils.crawler;
+package com.sicnu.yudidi.crawler;
 
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -10,7 +10,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
-public class HTTPCommonUtil {
+public class CrawlerBase {
+
 	public static void trustEveryone() {
 		try {
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
@@ -34,6 +35,14 @@ public class HTTPCommonUtil {
 			}}, new SecureRandom());
 			HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
 		} catch (Exception e) {
+		}
+	}
+	
+	protected static  void sleep() {
+		try {
+			Thread.sleep(CrawlerConfig.CRAWLER_INTERVAL);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

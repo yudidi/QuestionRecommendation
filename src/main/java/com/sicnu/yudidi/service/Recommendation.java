@@ -17,12 +17,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sicnu.yudidi.crawler.CrawlerNoCookie;
+import com.sicnu.yudidi.crawler.CrawlerWithCookie;
 import com.sicnu.yudidi.dao.ClusterDao;
 import com.sicnu.yudidi.dao.RecordDao;
 import com.sicnu.yudidi.mybatis.pojo.Cluster;
 import com.sicnu.yudidi.utils.collections.CollectionsUtils;
-import com.sicnu.yudidi.utils.crawler.CrawlerNoCookie;
-import com.sicnu.yudidi.utils.crawler.CrawlerWithCookies;
 
 public class Recommendation {
 
@@ -46,38 +46,42 @@ public class Recommendation {
 
 	/**
 	 * 获取推荐给该用户的试题id-list
+	 * 
 	 * @param nowcoderId
 	 * @return
 	 */
 	public static List<String> getRecommendedSubjectIdsList(String nowcoderId) {
 		// 获取可以最匹配的簇
 		List<Cluster> clusters = null;
-		try {
-			clusters = new ClusterDao().listClusters();
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("ClusterDao查询数据库失败");
-		}
+		do {
+			try {
+				clusters = new ClusterDao().listClusters();
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("ClusterDao查询数据库失败");
+			}
+		} while (clusters == null);
+
 		List<String> passedSubjectIdList = getPassedSubjectIdList(nowcoderId);
 		Map<Integer, List<String>> map = new HashMap<>();
 		for (int i = 0; i < clusters.size(); i++) {
 			List<String> oneClusterSubjectList = Arrays.asList(clusters.get(i).getSubject_id_join().split(","));
-			log.debug(String.format("簇%s中试题列表%d,%s", i,oneClusterSubjectList.size(),oneClusterSubjectList));
-			log.debug(String.format("用户的通过的试题列表%d,%s",passedSubjectIdList.size(),passedSubjectIdList));
+			log.debug(String.format("簇%s中试题列表%d,%s", i, oneClusterSubjectList.size(), oneClusterSubjectList));
+			log.debug(String.format("用户的通过的试题列表%d,%s", passedSubjectIdList.size(), passedSubjectIdList));
 			List<String> inters = CollectionsUtils.intersection(oneClusterSubjectList, passedSubjectIdList);
-			log.debug(String.format("簇%s和答题记录列表的交集个数%d,交集%s:",i,inters.size(),inters));
-			if (inters.size()>0) {
+			log.debug(String.format("簇%s和答题记录列表的交集个数%d,交集%s:", i, inters.size(), inters));
+			if (inters.size() > 0) {
 				map.put(i, inters);
 			}
 		}
 		log.debug(String.format("map<簇号,交集>:%s", map));
-		//都没有交集
-		if (map.size()==0) {
+		// 都没有交集
+		if (map.size() == 0) {
 			return null;
 		}
 		List<Map.Entry<Integer, List<String>>> entries = new ArrayList<Map.Entry<Integer, List<String>>>(map.entrySet());
 		Collections.sort(entries, new Comparator<Map.Entry<Integer, List<String>>>() {
-			// 按照value.size()降序排列  //最长的lcs
+			// 按照value.size()降序排列 //最长的lcs
 			@Override
 			public int compare(Entry<Integer, List<String>> v1, Entry<Integer, List<String>> v2) {
 				return v2.getValue().size() - v1.getValue().size();
@@ -88,8 +92,8 @@ public class Recommendation {
 		for (Entry<Integer, List<String>> entry : entries) {
 			Cluster cluster = clusters.get(entry.getKey());
 			List<String> subjectIdsOfCluster = Arrays.asList(cluster.getSubject_id_join().split(","));
-			subjectIdsOfCluster = CollectionsUtils.subtract(subjectIdsOfCluster,passedSubjectIdList);// 排除已经做了的题目
-			log.debug(String.format("排除交集后可以推荐的题目个数%d,可以推荐的题目%s", subjectIdsOfCluster.size(),subjectIdsOfCluster));
+			subjectIdsOfCluster = CollectionsUtils.subtract(subjectIdsOfCluster, passedSubjectIdList);// 排除已经做了的题目
+			log.debug(String.format("排除交集后可以推荐的题目个数%d,可以推荐的题目%s", subjectIdsOfCluster.size(), subjectIdsOfCluster));
 			if (subjectIdsOfCluster.size() == 0) {
 				log.debug(String.format("簇%s没有题目可以推荐", cluster.getCluster_name()));
 				continue;
@@ -107,7 +111,7 @@ public class Recommendation {
 		}
 		return recommendedSubjectIdList;
 	}
-	
+
 	public static String generateJsonByRecommendSubject(List<String> recommendedList) {
 		RecordDao recordDao = new RecordDao();
 		Map<String, String> idAndTitleMap = null;
@@ -133,7 +137,10 @@ public class Recommendation {
 	// 检查该用户是否存在
 	public static boolean checkExistance(String nowcoderId) {
 		String url = "https://www.nowcoder.com/profile/" + nowcoderId;
-		Document doc = CrawlerNoCookie.getPageContent(url, "get");
+		Document doc = null;
+		do {
+			doc = CrawlerNoCookie.getPageContent(url, "get");
+		} while (doc == null);
 		if (doc.select(".side-profile-info").size() != 0 && doc.select(".menu-box").size() != 0) {
 			return true;
 		}
@@ -150,6 +157,7 @@ public class Recommendation {
 
 	/**
 	 * 获取用户所有答题记录subject-id-list,已经去重
+	 * 
 	 * @param userId
 	 * @return
 	 */
@@ -159,7 +167,7 @@ public class Recommendation {
 		while (true) {
 			String url = RecommendationConfig.cookBooksUrl.replace("${userId}", userId).replace("${page}", page + "");
 			List<String> subjectIdsOfOnePage = new ArrayList<>(getSubjectIdsOfOnePage(url));
-			log.debug(String.format("获取url%s中获取subject-id-list", url,subjectIdsOfOnePage));
+			log.debug(String.format("获取url%s中获取subject-id-list", url, subjectIdsOfOnePage));
 			if (subjectIdsOfOnePage.size() == 0) {
 				log.debug(String.format("用户答题记录爬取完毕,最后一页是:%s,最后一页题目数:%d", url, subjectIdsOfOnePage.size()));
 				break;
@@ -168,14 +176,14 @@ public class Recommendation {
 			log.debug(String.format("codeBooks|页面%d|提取完毕|:%s", page, url));
 			page++;
 		}
-		log.info(String.format("用户%s答题总数%d,%s", userId, subjectIdsTotal.size(),subjectIdsTotal));
+		log.info(String.format("用户%s答题总数%d,%s", userId, subjectIdsTotal.size(), subjectIdsTotal));
 		return subjectIdsTotal;
 	}
 
 	// 获取一个页面通过编程题的subject_id
 	public static Set<String> getSubjectIdsOfOnePage(String url) {
 		Set<String> subjectIds = new HashSet<>();
-		Document doc = CrawlerWithCookies.getPageContent(url, "get");
+		Document doc = CrawlerWithCookie.getPageContent(url, "get");
 		Elements trs = doc.select(".module-body tbody tr");
 		if (trs == null) {
 			log.debug("不存在: .module-body tbody");
@@ -191,17 +199,17 @@ public class Recommendation {
 	}
 
 	// 根据subMissionIdUrl提取subjectId
-		public static String extractSubjectId(String subMissionIdUrl) {
-			Document doc = null;
-			do {
-				doc = CrawlerWithCookies.getPageContent(subMissionIdUrl, "get");
-			} while (doc == null);
-			String subjectUrl = doc.select("a.continue-challenge").attr("href");
-			if (subjectUrl == null) {
-				log.debug(String.format("extractSubjectId失败,不能定位subjectUrl,", subMissionIdUrl));
-			}
-			String subjectId = subjectUrl.substring(subjectUrl.lastIndexOf("/") + 1);
-			log.debug(String.format("根据subMissionIdUrl:%s获取subjectject-url:%s|subject-id:%s",subMissionIdUrl,subjectUrl,subjectId));
-			return subjectId;
+	public static String extractSubjectId(String subMissionIdUrl) {
+		Document doc = null;
+		do {
+			doc = CrawlerWithCookie.getPageContent(subMissionIdUrl, "get");
+		} while (doc == null);
+		String subjectUrl = doc.select("a.continue-challenge").attr("href");
+		if (subjectUrl == null) {
+			log.debug(String.format("extractSubjectId失败,不能定位subjectUrl,", subMissionIdUrl));
 		}
+		String subjectId = subjectUrl.substring(subjectUrl.lastIndexOf("/") + 1);
+		log.debug(String.format("根据subMissionIdUrl:%s获取subjectject-url:%s|subject-id:%s", subMissionIdUrl, subjectUrl, subjectId));
+		return subjectId;
+	}
 }

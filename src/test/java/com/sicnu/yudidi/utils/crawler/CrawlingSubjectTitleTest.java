@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.sicnu.yudidi.crawler.CrawlingSubjectTitle;
 import com.sicnu.yudidi.mybatis.pojo.Record;
 
 public class CrawlingSubjectTitleTest {

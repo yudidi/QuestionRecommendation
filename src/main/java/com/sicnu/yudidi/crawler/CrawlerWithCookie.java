@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.utils.crawler;
+package com.sicnu.yudidi.crawler;
 
 import java.io.IOException;
 
@@ -7,13 +7,15 @@ import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 
-public class CrawlerWithCookies extends CrawlerBase {
+public class CrawlerWithCookie extends CrawlerBase {
 
-	private final static Logger log = Logger.getLogger(CrawlerWithCookies.class);
+	private final static Logger log = Logger.getLogger(CrawlerWithCookie.class);
 	static {
-		HTTPCommonUtil.trustEveryone();
+		trustEveryone();
 	}
 
+	//TODO--是否增加限时功能
+	//TODO--是否增加直到成功才能返回的参数
 	public static Document getPageContent(String url, String method) {
 		log.debug(String.format("url:%s|method:%s", url, method));
 		sleep();

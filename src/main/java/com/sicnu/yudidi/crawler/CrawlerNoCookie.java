@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.utils.crawler;
+package com.sicnu.yudidi.crawler;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public class CrawlerNoCookie extends CrawlerBase {
 
 	private final static Logger log = Logger.getLogger(CrawlerNoCookie.class);
 	static {
-		HTTPCommonUtil.trustEveryone();
+		trustEveryone();
 	}
 
 	public static JSONObject getJson(String url, String method) {

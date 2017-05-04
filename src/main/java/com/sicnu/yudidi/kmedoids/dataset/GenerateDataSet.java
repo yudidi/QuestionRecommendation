@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import com.sicnu.yudidi.utils.crawler.CrawlerConfig;
+import com.sicnu.yudidi.crawler.CrawlerConfig;
 import com.sicnu.yudidi.utils.file.FileEx;
 
 public class GenerateDataSet {

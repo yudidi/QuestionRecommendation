@@ -1,4 +1,4 @@
-package com.sicnu.yudidi.kmedoids.dataset;
+package com.sicnu.yudidi.crawler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,8 +22,6 @@ import org.jsoup.select.Elements;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sicnu.yudidi.crawler.CrawlerConfig;
-import com.sicnu.yudidi.crawler.CrawlerNoCookie;
 import com.sicnu.yudidi.utils.file.FileEx;
 import com.sicnu.yudidi.utils.task.TimeLimitTask;
 
@@ -35,10 +33,6 @@ public class CrawlerOfSubject {
 
 	public static void main(String[] args) {
 		crawlingSubjectPages();
-	}
-
-	public static void timer() {
-		// https://www.oschina.net/code/snippet_854917_25830
 	}
 
 	private static void initQueue() {

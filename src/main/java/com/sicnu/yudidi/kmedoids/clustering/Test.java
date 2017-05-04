@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.sicnu.yudidi.utils.crawler.CrawlerConfig;
+import com.sicnu.yudidi.crawler.CrawlerConfig;
 import com.sicnu.yudidi.utils.file.FileEx;
 
 public class Test {

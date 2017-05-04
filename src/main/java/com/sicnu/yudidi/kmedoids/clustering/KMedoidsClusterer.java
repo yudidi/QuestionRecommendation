@@ -71,7 +71,7 @@ public class KMedoidsClusterer {
 		return output;
 	}
 
-	public void saveOutput() {
+	public void saveClusters() {
 		for (Cluster cluster : clusters) {
 			String clusterName = cluster.getClusterName();
 			for (DataSetRecord record : cluster.getRecordsList()) {
