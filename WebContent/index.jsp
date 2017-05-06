@@ -81,6 +81,24 @@
 			});
 		});
 		function submit() {
+			var uid = $("#myinput").val();
+			var z = /^\d+$/;
+			var errorMsg = [{"msg":'<label class="warning">'+uid+'</label> is invalid, nowcoder ID should be pure numbers.'}];
+			if (z.test(uid) == false) {
+				$('#example')
+				.DataTable(
+						{
+							"destroy" : true,
+							"dom" : '<<t>ip>',
+							data : errorMsg,
+							//使用对象数组，一定要配置columns，告诉 DataTables 每列对应的属性
+							//data 这里是固定不变的，name，position，salary，office 为你数据里对应的属性
+							"columns" : [ {
+								"data" : "msg"
+							}, ]
+						});
+				return;
+			};
 			$('#example')
 					.DataTable(
 							{
