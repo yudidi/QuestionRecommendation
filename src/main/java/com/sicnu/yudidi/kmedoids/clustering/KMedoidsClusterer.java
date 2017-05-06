@@ -19,14 +19,11 @@ public class KMedoidsClusterer {
 
 	private int k; // 分类数量
 	private List<DataSetRecord> allRecords; // 所有记录
-	// private List<Integer> allRecordIds; // 所有记录的编号
 	private Cluster[] clusters; // 所有簇
 	private int maxIterations; // 最大迭代次数
-
 	private int[][] distancesMemo; // 距离备忘录
 
 	/**
-	 * 
 	 * @param k 簇数目
 	 * @param allRecords 所有记录
 	 * @param maxIterations 最大迭代次数
@@ -71,14 +68,6 @@ public class KMedoidsClusterer {
 		return output;
 	}
 
-	public void saveClusters() {
-		for (Cluster cluster : clusters) {
-			String clusterName = cluster.getClusterName();
-			for (DataSetRecord record : cluster.getRecordsList()) {
-			}
-		}
-	}
-	
 	/**
 	 * 随机选择k个中心记录,然后开始聚类
 	 */
@@ -289,9 +278,8 @@ public class KMedoidsClusterer {
 	}
 
 	/**
-	 * 形成初始簇
-	 * 
-	 * @param centralRecords
+	 * 根据中心点形成初始簇
+	 * @param centralRecords 中心点集合
 	 */
 	private void generateInitialClusters(List<DataSetRecord> centralRecords) {
 		// 将记录列表的相应记录标记为中心记录
@@ -326,7 +314,6 @@ public class KMedoidsClusterer {
 
 	/**
 	 * 查询两个记录的距离
-	 * 
 	 * @param record1
 	 * @param record2
 	 * @return
@@ -338,8 +325,11 @@ public class KMedoidsClusterer {
 		return distancesMemo[record1.getId()][record2.getId()];
 	}
 
+	/**
+	 * 查询记录距离备忘录，获取两个记录的距离
+	 * @return
+	 */
 	public int[][] getDistancesMemo() {
 		return distancesMemo;
 	}
-
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class RecommendationTest {
@@ -50,9 +49,6 @@ public class RecommendationTest {
 	public void testGenerateJsonByRecommendSubject() {
 		List<String> recommendedList = Arrays.asList(new String[]{"e3b2cc44aa9b4851bdca89dd79c53150"});
 		String json = Recommendation.generateJsonByRecommendSubject(recommendedList);
-		JSONObject jsonObject = JSONObject.parseObject(json);
-		JSONArray data = jsonObject.getJSONArray("data");
-		JSONObject one = data.getJSONObject(0);
 		System.out.println(json);
 	}
 
