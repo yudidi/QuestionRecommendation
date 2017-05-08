@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
@@ -29,19 +30,24 @@ public class Recommendation {
 	private final static Logger log = Logger.getLogger(Recommendation.class);
 
 	public static String generateJson(String nowcoderId) {
+		
+		if (!Pattern.matches("^[0-9]+$", nowcoderId)) {
+			return String.format("{\"data\":[{\"subject\":\"Soryy, <label class=\\\"warning\\\">%s</label> is invalid, nowcoder ID should be pure numbers.\"}]}", nowcoderId);
+		}
+		
 		if (!checkExistance(nowcoderId) || nowcoderId == null || nowcoderId.trim().length() == 0) {
-			return String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Soryy, user %s does not exist</label>\"}]}", nowcoderId);
+			return String.format("{\"data\":[{\"subject\":\"Soryy, user <label class=\\\"warning\\\">%s</label> does not exist.\"}]}", nowcoderId);
 		}
 		int passed = canBeRecommended(nowcoderId);
 		if (canBeRecommended(nowcoderId) < RecommendationConfig.MIN_ANSWERED_COUNT) {
 			log.debug(String.format("%s只通过 %d道题，不满足推荐条件",nowcoderId,passed));
-			return String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Sorry,user %s need to do %d more questions to match our recommendation condition</label>\"}]}", nowcoderId,
+			return String.format("{\"data\":[{\"subject\":\"Sorry,user %s <label class=\\\"warning\\\"> need to do %d more questions </label> to match our recommendation condition.\"}]}", nowcoderId,
 					RecommendationConfig.MIN_ANSWERED_COUNT - passed, RecommendationConfig.MIN_ANSWERED_COUNT);
 		}
 		List<String> recommendedList = getRecommendedSubjectIdsList(nowcoderId);
 		if (recommendedList == null) {
 			log.debug("没有可以推荐的题目");
-			return String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Maybe you are a Legendary.There is no questions we can recommended for you</label>\"}]}", nowcoderId);
+			return String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Maybe you are a Legendary.There is no questions we can recommended for you.</label>\"}]}", nowcoderId);
 		}
 		return generateJsonByRecommendSubject(recommendedList);
 	}
