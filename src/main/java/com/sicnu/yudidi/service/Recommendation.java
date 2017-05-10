@@ -32,16 +32,16 @@ public class Recommendation {
 	public static String generateJson(String nowcoderId) {
 		
 		if (!Pattern.matches("^[0-9]+$", nowcoderId)) {
-			return String.format("{\"data\":[{\"subject\":\"Soryy, <label class=\\\"warning\\\">%s</label> is invalid, nowcoder ID should be pure numbers.\"}]}", nowcoderId);
+			return String.format("{\"data\":[{\"subject\":\"Soryy, <label class=\\\"warning\\\">'%s'</label> is invalid, nowcoder ID should be pure numbers.\"}]}", nowcoderId);
 		}
 		
 		if (!checkExistance(nowcoderId) || nowcoderId == null || nowcoderId.trim().length() == 0) {
-			return String.format("{\"data\":[{\"subject\":\"Soryy, user <label class=\\\"warning\\\">%s</label> does not exist.\"}]}", nowcoderId);
+			return String.format("{\"data\":[{\"subject\":\"Soryy, nowcoder ID <label class=\\\"warning\\\">%s</label> does not exist.\"}]}", nowcoderId);
 		}
 		int passed = canBeRecommended(nowcoderId);
 		if (canBeRecommended(nowcoderId) < RecommendationConfig.MIN_ANSWERED_COUNT) {
 			log.debug(String.format("%s只通过 %d道题，不满足推荐条件",nowcoderId,passed));
-			return String.format("{\"data\":[{\"subject\":\"Sorry,user %s <label class=\\\"warning\\\"> need to do %d more questions </label> to match our recommendation condition.\"}]}", nowcoderId,
+			return String.format("{\"data\":[{\"subject\":\"Sorry, <label class=\\\"warning\\\">user %s need to do %d more questions </label> to match our recommendation condition.\"}]}", nowcoderId,
 					RecommendationConfig.MIN_ANSWERED_COUNT - passed, RecommendationConfig.MIN_ANSWERED_COUNT);
 		}
 		List<String> recommendedList = getRecommendedSubjectIdsList(nowcoderId);
@@ -190,7 +190,10 @@ public class Recommendation {
 	// 获取一个页面通过编程题的subject_id
 	public static Set<String> getSubjectIdsOfOnePage(String url) {
 		Set<String> subjectIds = new HashSet<>();
-		Document doc = CrawlerWithCookie.getPageContent(url, "get");
+		Document doc = null;
+		do {
+			doc = CrawlerWithCookie.getPageContent(url, "get");
+		} while (doc == null);
 		Elements trs = doc.select(".module-body tbody tr");
 		if (trs == null) {
 			log.debug("不存在: .module-body tbody");

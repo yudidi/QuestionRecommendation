@@ -74,11 +74,14 @@ public class CrawlerNoCookie extends CrawlerBase {
 		sleep();
 		Document doc = null;
 		Connection conn = HttpConnection.connect(url).timeout(CrawlerConfig.TIME_OUT);
-		try {
-			doc = method.equals("get") ? conn.get() : conn.post();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		do {
+			try {
+				doc = method.equals("get") ? conn.get() : conn.post();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (doc == null);
+		
 		return doc;
 	}
 }
