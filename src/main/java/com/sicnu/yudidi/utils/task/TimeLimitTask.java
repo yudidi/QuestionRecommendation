@@ -15,7 +15,35 @@ public class TimeLimitTask {
 
 	/**
 	 * 执行一个有时间限制的任务
-	 * 
+	 * @param runnable
+	 *            待执行的任务
+	 * @param seconds
+	 *            超时时间(单位: 秒)
+	 * @return
+	 */
+	public static String timeLimitTaskString(Callable<String> runnable, long timeLimit, TimeUnit unit) {
+		String string = null;
+		ExecutorService threadPool = Executors.newCachedThreadPool();
+		Future<String> future = null;
+		try {
+			future = threadPool.submit(runnable);
+			string = future.get(timeLimit, unit);
+		} catch (TimeoutException e) {
+			logger.error("定时任务超时");
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("定时任务处理失败");
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			threadPool.shutdownNow();
+		}
+		return string;
+	}
+	
+	/**
+	 * 执行一个有时间限制的任务
 	 * @param runnable
 	 *            待执行的任务
 	 * @param seconds

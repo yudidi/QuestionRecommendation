@@ -30,7 +30,7 @@ public class Recommendation {
 	private final static Logger log = Logger.getLogger(Recommendation.class);
 
 	public static String generateJson(String nowcoderId) {
-		
+		log.info(String.format("nowcoderId:%s start generete json.", nowcoderId));
 		if (!Pattern.matches("^[0-9]+$", nowcoderId)) {
 			return String.format("{\"data\":[{\"subject\":\"Soryy, <label class=\\\"warning\\\">%s</label> is invalid, nowcoder ID should be pure numbers.\"}]}", nowcoderId);
 		}
