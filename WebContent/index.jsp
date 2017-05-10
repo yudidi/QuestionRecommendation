@@ -75,47 +75,72 @@
 	</div>
 
 	<script type="text/javascript" charset="utf-8">
+	
 		$(document).ready(function() {
 			$('#example').DataTable({
 				"dom" : '<<t>i>'
 			});
 		});
+		
 		function submit() {
-			var uid = $("#myinput").val();
-			var z = /^\d+$/;
-			var errorMsg = [{"msg":'<label class="warning">'+uid+'</label> is invalid, nowcoder ID should be pure numbers.'}];
-			if (z.test(uid) == false) {
-				$('#example')
-				.DataTable(
-						{
-							"destroy" : true,
-							"dom" : '<<t>ip>',
-							data : errorMsg,
-							//使用对象数组，一定要配置columns，告诉 DataTables 每列对应的属性
-							//data 这里是固定不变的，name，position，salary，office 为你数据里对应的属性
-							"columns" : [ {
-								"data" : "msg"
-							}, ]
-						});
+			var uid = $.trim($("#myinput").val());
+			if (checkInput(uid) == 0) {
 				return;
-			};
-			$('#example')
-					.DataTable(
-							{
-								"destroy" : true,
-								"dom" : '<<t>ip>',
-								ajax : {
-									type : 'post',
-									url : '${base}/recommend',
-									data : {
-										"uid" : $("#myinput").val()
-									},
-									contentType : "application/x-www-form-urlencoded; charset=utf-8"
-								},
-								"columns" : [ {
-									"data" : "subject"
-								}, ]
-							});
+			}
+			loadJson(uid);
+		}
+
+		function checkInput(uid) {
+			var z = /^\d+$/;
+			var errorMsg = '';
+			if (uid.length == 0) {
+				errorMsg = [ {
+					"subject" : '<label class="warning">Nowcoder ID is required.</label>'
+				} ];
+				loadErrorMsg(errorMsg);
+				return 0;
+			}
+			if (z.test(uid) == false) {
+				errorMsg = [ {
+					"subject" : '<label class="warning">'
+							+ uid
+							+ '</label> is invalid, nowcoder ID should be pure numbers.'
+				} ];
+				loadErrorMsg(errorMsg);
+				return 0;
+			}
+		}
+
+		function loadErrorMsg(errorMsg) {
+			$('#example').DataTable({
+				"destroy" : true,
+				"dom" : '<<t>ip>',
+				data : errorMsg,
+				"columns" : [ {
+					"data" : "subject"
+				}, ]
+			});
+		}
+
+		function loadJson(uid) {
+			$('#example').DataTable({
+				"destroy" : true,
+				"dom" : '<<t>ip>',
+				ajax : {
+					type : 'post',
+					url : '${base}/recommend',
+					data : {
+						"uid" : uid
+					},
+					contentType : "application/x-www-form-urlencoded; charset=utf-8"
+				},
+				"language" : {
+					"loadingRecords" : "Please wait - loading..."
+				},
+				"columns" : [ {
+					"data" : "subject"
+				}, ]
+			});
 		}
 	</script>
 
