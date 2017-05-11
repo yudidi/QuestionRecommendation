@@ -42,7 +42,9 @@ public class CrawlerBase {
 		try {
 			Thread.sleep(CrawlerConfig.CRAWLER_INTERVAL);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//因为抛出InterruptedException导致标志位复位为false，所以要重新设置为true,使得接下来的代码能够检测到true.
+			//Restore the interrupted status to false
+			Thread.currentThread().interrupt();
 		}
 	}
 }
