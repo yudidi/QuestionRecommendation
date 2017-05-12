@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -24,30 +26,66 @@ import com.sicnu.yudidi.dao.ClusterDao;
 import com.sicnu.yudidi.dao.RecordDao;
 import com.sicnu.yudidi.mybatis.pojo.Cluster;
 import com.sicnu.yudidi.utils.collections.CollectionsUtils;
+import com.sicnu.yudidi.utils.task.TimeLimitTask;
 
 public class Recommendation {
 
 	private final static Logger log = Logger.getLogger(Recommendation.class);
+	/**
+	 * 限时推荐任务
+	 * 
+	 * @param nowcoderId
+	 * @return
+	 */
+	public static String recommend(String nowcoderId) {
+		Callable<String> runnable = new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				String json = null;
+				json = Recommendation.generateJson(nowcoderId);
+				log.info(String.format("runnable|json == %s", json));
+				return json;
+			}
+		};
+		String json = TimeLimitTask.timeLimitTaskString(runnable, RecommendationConfig.LIMIT_RECOMMENDATION_TASK_SECONDS, TimeUnit.SECONDS);
+		if (json == null) {
+			json = String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Recommendation timeout, please check your network or try again.</label>\"}]}", nowcoderId);
+		}
+		return json;
+	}
 
 	public static String generateJson(String nowcoderId) {
-		
 		if (!Pattern.matches("^[0-9]+$", nowcoderId)) {
 			return String.format("{\"data\":[{\"subject\":\"Soryy, <label class=\\\"warning\\\">'%s'</label> is invalid, nowcoder ID should be pure numbers.\"}]}", nowcoderId);
 		}
-		
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
 		if (!checkExistance(nowcoderId) || nowcoderId == null || nowcoderId.trim().length() == 0) {
 			return String.format("{\"data\":[{\"subject\":\"Soryy, nowcoder ID <label class=\\\"warning\\\">%s</label> does not exist.\"}]}", nowcoderId);
 		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
 		int passed = canBeRecommended(nowcoderId);
 		if (canBeRecommended(nowcoderId) < RecommendationConfig.MIN_ANSWERED_COUNT) {
-			log.debug(String.format("%s只通过 %d道题，不满足推荐条件",nowcoderId,passed));
+			log.debug(String.format("%s只通过 %d道题，不满足推荐条件", nowcoderId, passed));
 			return String.format("{\"data\":[{\"subject\":\"Sorry, <label class=\\\"warning\\\">user %s need to do %d more questions </label> to match our recommendation condition.\"}]}", nowcoderId,
 					RecommendationConfig.MIN_ANSWERED_COUNT - passed, RecommendationConfig.MIN_ANSWERED_COUNT);
 		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
 		List<String> recommendedList = getRecommendedSubjectIdsList(nowcoderId);
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
 		if (recommendedList == null) {
 			log.debug("没有可以推荐的题目");
 			return String.format("{\"data\":[{\"subject\":\"<label class=\\\"warning\\\">Maybe you are a Legendary.There is no questions we can recommended for you.</label>\"}]}", nowcoderId);
+		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
 		}
 		return generateJsonByRecommendSubject(recommendedList);
 	}
@@ -58,9 +96,12 @@ public class Recommendation {
 	 * @return
 	 */
 	public static List<String> getRecommendedSubjectIdsList(String nowcoderId) {
-		// 获取可以最匹配的簇
+		// 获取最匹配的簇
 		List<Cluster> clusters = null;
 		do {
+			if (Thread.currentThread().isInterrupted()) {
+				return null;
+			}
 			try {
 				clusters = new ClusterDao().listClusters();
 			} catch (Exception e) {
@@ -72,6 +113,9 @@ public class Recommendation {
 		List<String> passedSubjectIdList = getPassedSubjectIdList(nowcoderId);
 		Map<Integer, List<String>> map = new HashMap<>();
 		for (int i = 0; i < clusters.size(); i++) {
+			if (Thread.currentThread().isInterrupted()) {
+				return null;
+			}
 			List<String> oneClusterSubjectList = Arrays.asList(clusters.get(i).getSubject_id_join().split(","));
 			log.debug(String.format("簇%s中试题列表%d,%s", i, oneClusterSubjectList.size(), oneClusterSubjectList));
 			log.debug(String.format("用户的通过的试题列表%d,%s", passedSubjectIdList.size(), passedSubjectIdList));
@@ -128,7 +172,6 @@ public class Recommendation {
 			e.printStackTrace();
 			log.error("RecordDao层查询数据库失败");
 		}
-
 		StringBuffer tableJson = new StringBuffer();
 		tableJson.append("{  \"data\": [");
 		for (String subjectId : recommendedList) {
@@ -144,10 +187,7 @@ public class Recommendation {
 	// 检查该用户是否存在
 	public static boolean checkExistance(String nowcoderId) {
 		String url = "https://www.nowcoder.com/profile/" + nowcoderId;
-		Document doc = null;
-		do {
-			doc = CrawlerNoCookie.getPageContent(url, "get");
-		} while (doc == null);
+		Document doc = CrawlerNoCookie.getPageContent(url, "get");
 		if (doc.select(".side-profile-info").size() != 0 && doc.select(".menu-box").size() != 0) {
 			return true;
 		}
@@ -171,12 +211,17 @@ public class Recommendation {
 	public static List<String> getPassedSubjectIdList(String userId) {
 		List<String> subjectIdsTotal = new ArrayList<>();
 		int page = 1;
-		while (true) {
+		while (!Thread.currentThread().isInterrupted()) {
+			log.debug(String.format("Thread %d| Thread.currentThread().interrupt() == %s", Thread.currentThread().getId(), Thread.currentThread().isInterrupted()));
+			if (page > RecommendationConfig.MAX_HISTORY_SUBJECTS_PAGES) {
+				log.info(String.format("达到抓取历史答题记录的上限页数%d,停止抓取", RecommendationConfig.MAX_HISTORY_SUBJECTS_PAGES));
+				break;
+			}
 			String url = RecommendationConfig.cookBooksUrl.replace("${userId}", userId).replace("${page}", page + "");
 			List<String> subjectIdsOfOnePage = new ArrayList<>(getSubjectIdsOfOnePage(url));
 			log.debug(String.format("获取url%s中获取subject-id-list", url, subjectIdsOfOnePage));
 			if (subjectIdsOfOnePage.size() == 0) {
-				log.debug(String.format("用户答题记录爬取完毕,最后一页是:%s,最后一页题目数:%d", url, subjectIdsOfOnePage.size()));
+				log.debug(String.format("用户答题记录爬取完毕,最后一页是:%s,最后一页题目总数:%d", url, subjectIdsOfOnePage.size()));
 				break;
 			}
 			subjectIdsTotal.addAll(subjectIdsOfOnePage);
@@ -187,13 +232,15 @@ public class Recommendation {
 		return subjectIdsTotal;
 	}
 
-	// 获取一个页面通过编程题的subject_id
+	/**
+	 * 获取一个答题记录页面中所有编程题的subject_id(去重后)
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public static Set<String> getSubjectIdsOfOnePage(String url) {
 		Set<String> subjectIds = new HashSet<>();
-		Document doc = null;
-		do {
-			doc = CrawlerWithCookie.getPageContent(url, "get");
-		} while (doc == null);
+		Document doc = CrawlerWithCookie.getPageContent(url, "get");
 		Elements trs = doc.select(".module-body tbody tr");
 		if (trs == null) {
 			log.debug("不存在: .module-body tbody");
@@ -208,12 +255,14 @@ public class Recommendation {
 		return subjectIds;
 	}
 
-	// 根据subMissionIdUrl提取subjectId
+	/**
+	 * 根据subMissionIdUrl提取一道试题的subject_id
+	 * 
+	 * @param subMissionIdUrl
+	 * @return
+	 */
 	public static String extractSubjectId(String subMissionIdUrl) {
-		Document doc = null;
-		do {
-			doc = CrawlerWithCookie.getPageContent(subMissionIdUrl, "get");
-		} while (doc == null);
+		Document doc = CrawlerWithCookie.getPageContent(subMissionIdUrl, "get");
 		String subjectUrl = doc.select("a.continue-challenge").attr("href");
 		if (subjectUrl == null) {
 			log.debug(String.format("extractSubjectId失败,不能定位subjectUrl,", subMissionIdUrl));

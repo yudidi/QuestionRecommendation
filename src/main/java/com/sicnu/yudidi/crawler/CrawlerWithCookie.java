@@ -14,25 +14,32 @@ public class CrawlerWithCookie extends CrawlerBase {
 		trustEveryone();
 	}
 
-	//TODO--是否增加限时功能
-	//TODO--是否增加直到成功才能返回的参数
+	/**
+	 * 直到成功才能返回
+	 * @param url
+	 * @param method
+	 * @return
+	 */
 	public static Document getPageContent(String url, String method) {
 		log.debug(String.format("url:%s|method:%s", url, method));
-		sleep();
 		Document doc = null;
 		Connection conn = HttpConnection.connect(url).timeout(CrawlerConfig.TIME_OUT);
 		conn.header("Accept-Encoding", "gzip,deflate,sdch");
 		conn.header("Connection", "close");
 		conn.header("Cookie", CrawlerConfig.COOKIES);
-		try {
-			doc = method.equals("get") ? conn.get() : conn.post();
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.debug("getPageContent失败");
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.debug("getPageContent失败");
-		}
+		do {
+			sleep();
+			log.debug(String.format("Thread %d|Thread.interrupted() == %s",Thread.currentThread().getId(), Thread.currentThread().isInterrupted()));
+			try {
+				doc = method.equals("get") ? conn.get() : conn.post();
+			} catch (IOException e) {
+				e.printStackTrace();
+				log.debug("getPageContent失败");
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.debug("getPageContent失败");
+			}
+		} while (doc == null && !Thread.currentThread().isInterrupted());
 		return doc;
 	}
 }

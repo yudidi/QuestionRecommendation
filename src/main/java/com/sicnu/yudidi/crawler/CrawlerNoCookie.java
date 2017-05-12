@@ -46,42 +46,45 @@ public class CrawlerNoCookie extends CrawlerBase {
 
 	public static String getJsonContent(String url, String method) {
 		log.debug(String.format("url:%s|method:%s", url, method));
-		sleep();
 		String jsonContent = null;
 		Connection conn = null;
-		try {
-			conn = HttpConnection.connect(url).header("Accept", "*/*").header("Accept-Encoding", "gzip, deflate").header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
-					.header("Content-Type", "application/json;charset=UTF-8").timeout(CrawlerConfig.TIME_OUT).ignoreContentType(true);
-			switch (method) {
-				case "get" :
-					jsonContent = conn.get().body().text();
-					break;
-				case "post" :
-					jsonContent = conn.post().body().text();
-					break;
-				case "excute" :
-					jsonContent = conn.execute().body();
-					break;
+		do {
+			sleep();
+			try {
+				conn = HttpConnection.connect(url).header("Accept", "*/*").header("Accept-Encoding", "gzip, deflate").header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
+						.header("Content-Type", "application/json;charset=UTF-8").timeout(CrawlerConfig.TIME_OUT).ignoreContentType(true);
+				switch (method) {
+					case "get" :
+						jsonContent = conn.get().body().text();
+						break;
+					case "post" :
+						jsonContent = conn.post().body().text();
+						break;
+					case "excute" :
+						jsonContent = conn.execute().body();
+						break;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} while (jsonContent == null && !Thread.currentThread().isInterrupted());
 		return jsonContent;
 	}
 
 	public static Document getPageContent(String url, String method) {
 		log.debug(String.format("url:%s|method:%s", url, method));
-		sleep();
 		Document doc = null;
 		Connection conn = HttpConnection.connect(url).timeout(CrawlerConfig.TIME_OUT);
 		do {
+			sleep();
 			try {
 				doc = method.equals("get") ? conn.get() : conn.post();
 			} catch (IOException e) {
+				log.error(String.format("getPageContent failed : %s",url));
 				e.printStackTrace();
 			}
-		} while (doc == null);
-		
+			log.debug(String.format("Thread %s |!Thread.currentThread().isInterrupted() == %s",Thread.currentThread().getId(), !Thread.currentThread().isInterrupted()));
+		} while (doc == null && !Thread.currentThread().isInterrupted());
 		return doc;
 	}
 }
