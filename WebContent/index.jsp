@@ -50,7 +50,8 @@
 					Hi nowcoder, I'll serve you <br>
 				</h1>
 				<div class="input-group">
-					<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> <input id="myinput" type="text" class="form-control input-lg" placeholder="Input your nowcoder ID:5933350"> <span id="submit" onclick="submit(this)" class="input-group-addon"> <i
+					<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> <input id="myinput" type="text" class="form-control input-lg" placeholder="Input your nowcoder ID:5933350">
+					 <span id="submit" onclick="submit()" class="input-group-addon"> <i
 						class="glyphicon glyphicon-circle-arrow-right"
 					></i>
 					</span>
@@ -75,7 +76,6 @@
 	</div>
 
 	<script type="text/javascript" charset="utf-8">
-	
 		$(document).ready(function() {
 			$('#example').DataTable({
 				"dom" : '<<t>i>'
@@ -87,6 +87,7 @@
 			if (checkInput(uid) == 0) {
 				return;
 			}
+			$("#submit").hide();
 			loadJson(uid);
 		}
 
@@ -123,23 +124,28 @@
 		}
 
 		function loadJson(uid) {
-			$('#example').DataTable({
+			$('#example')
+			.on('xhr.dt', function ( e, settings, json, xhr ) {
+				$("#submit").show();
+		    } )
+			.DataTable({
 				"destroy" : true,
 				"dom" : '<<t>ip>',
-				ajax : {
-					type : 'post',
-					url : '${base}/recommend',
-					data : {
-						"uid" : uid
-					},
-					contentType : "application/x-www-form-urlencoded; charset=utf-8"
-				},
 				"language" : {
 					"loadingRecords" : "Please wait - loading..."
 				},
 				"columns" : [ {
 					"data" : "subject"
-				}, ]
+				}, ],
+				ajax : {
+					type : 'post',
+					url : '${base}/recommend',
+					async : true,
+					data : {
+						"uid" : uid
+					},
+					contentType : "application/x-www-form-urlencoded; charset=utf-8",
+				}
 			});
 		}
 	</script>
