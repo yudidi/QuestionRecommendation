@@ -127,6 +127,13 @@
 			$('#example')
 			.on('xhr.dt', function ( e, settings, json, xhr ) {
 				$("#submit").show();
+				//服务器异常关闭，更新table的状态。
+				if(json == null){
+					errorMsg = [ {
+						"subject" : '<label class="warning">404 Not Found(The server may have shut down)</label>'
+					} ];
+					 loadErrorMsg(errorMsg);
+				}
 		    } )
 			.DataTable({
 				"destroy" : true,
