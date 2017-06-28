@@ -26,6 +26,7 @@ import com.sicnu.yudidi.dao.ClusterDao;
 import com.sicnu.yudidi.dao.RecordDao;
 import com.sicnu.yudidi.mybatis.pojo.Cluster;
 import com.sicnu.yudidi.utils.collections.CollectionsUtils;
+import com.sicnu.yudidi.utils.log.ExcepLogger;
 import com.sicnu.yudidi.utils.task.TimeLimitTask;
 
 public class Recommendation {
@@ -105,8 +106,7 @@ public class Recommendation {
 			try {
 				clusters = new ClusterDao().listClusters();
 			} catch (Exception e) {
-				e.printStackTrace();
-				log.error("ClusterDao查询数据库失败");
+				ExcepLogger.log(e, "ClusterDao查询数据库失败");
 			}
 		} while (clusters == null);
 
@@ -170,7 +170,7 @@ public class Recommendation {
 			idAndTitleMap = recordDao.getMap_id_tile();
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("RecordDao层查询数据库失败");
+			ExcepLogger.log(e,"RecordDao层查询数据库失败");
 		}
 		StringBuffer tableJson = new StringBuffer();
 		tableJson.append("{  \"data\": [");

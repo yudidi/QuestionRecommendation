@@ -23,6 +23,7 @@ import org.jsoup.select.Elements;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sicnu.yudidi.utils.file.FileEx;
+import com.sicnu.yudidi.utils.log.ExcepLogger;
 import com.sicnu.yudidi.utils.task.TimeLimitTask;
 
 public class CrawlerOfSubject {
@@ -48,15 +49,15 @@ public class CrawlerOfSubject {
 			}
 		} catch (FileNotFoundException e) {
 			log.debug("装载失败");
-			e.printStackTrace();
+			ExcepLogger.log(e);
 		} catch (IOException e) {
 			log.debug("装载失败");
-			e.printStackTrace();
+			ExcepLogger.log(e);
 		} finally {
 			try {
 				reader.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				ExcepLogger.log(e);
 			}
 		}
 		log.debug(String.format("完成装载题目url|%d个", questionQueue.size()));

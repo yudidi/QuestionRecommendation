@@ -10,6 +10,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
+import com.sicnu.yudidi.utils.log.ExcepLogger;
+
 public class TimeLimitTask {
 	private final static Logger logger = Logger.getLogger(TimeLimitTask.class);
 
@@ -65,10 +67,10 @@ public class TimeLimitTask {
 			future = threadPool.submit(runnable);
 			result = future.get(timeLimit, unit);
 		} catch (TimeoutException e) {
-			logger.error("定时任务超时,取消任务");
+			ExcepLogger.log(e,"定时任务超时,取消任务");
 	        future.cancel(true);
 		} catch (Exception e) {
-			logger.error("定时任务处理失败");
+			ExcepLogger.log(e,"定时任务处理失败");
 			logger.error(e.getMessage());
 		} finally {
 			threadPool.shutdownNow();

@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sicnu.yudidi.utils.log.ExcepLogger;
 
 public class CrawlerNoCookie extends CrawlerBase {
 
@@ -39,7 +40,7 @@ public class CrawlerNoCookie extends CrawlerBase {
 			}
 			jsonObject = (JSONObject) JSON.parse(json);
 		} catch (IOException e) {
-			e.printStackTrace();
+			ExcepLogger.log(e);
 		}
 		return jsonObject;
 	}
@@ -65,7 +66,7 @@ public class CrawlerNoCookie extends CrawlerBase {
 						break;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				ExcepLogger.log(e);
 			}
 		} while (jsonContent == null && !Thread.currentThread().isInterrupted());
 		return jsonContent;
@@ -79,10 +80,8 @@ public class CrawlerNoCookie extends CrawlerBase {
 			sleep();
 			try {
 				doc = method.equals("get") ? conn.get() : conn.post();
-				log.info(String.format("doc == %s", doc));
 			} catch (IOException e) {
-				log.error(String.format("getPageContent failed : %s",url));
-				e.printStackTrace();
+				ExcepLogger.log(e,String.format("getPageContent failed : %s",url));
 			}
 			log.debug(String.format("Thread %s |!Thread.currentThread().isInterrupted() == %s",Thread.currentThread().getId(), !Thread.currentThread().isInterrupted()));
 		} while (doc == null && !Thread.currentThread().isInterrupted());

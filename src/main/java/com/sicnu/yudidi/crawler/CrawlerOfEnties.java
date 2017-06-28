@@ -17,6 +17,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.sicnu.yudidi.utils.log.ExcepLogger;
+
 /*
  * Single Thread.
  */
@@ -42,11 +44,12 @@ public class CrawlerOfEnties extends CrawlerBase{
 		int page = 0;
 		Pattern pattern = Pattern.compile("(?<=\\/)\\w+(?=\\?)");//
 		boolean isFinish = false;
+		String url = "";
 		while (!isFinish) {
 			try {
 				trustEveryone();
-				String url = CrawlerConfig.ENTRY.replace("${page}", ++page + "");
-				System.out.println("url : " + url);
+				url = CrawlerConfig.ENTRY.replace("${page}", ++page + "");
+				log.debug("url : " + url);
 				Connection conn = HttpConnection.connect(url);
 				conn.timeout(CrawlerConfig.TIME_OUT);
 				conn.header("Accept-Encoding", "gzip,deflate,sdch");
@@ -70,7 +73,7 @@ public class CrawlerOfEnties extends CrawlerBase{
 				}
 				Thread.sleep(CrawlerConfig.CRAWLER_INTERVAL);
 			} catch (Exception e) {
-				e.printStackTrace();
+				ExcepLogger.log(e,url);
 			}
 		}
 	}
@@ -87,12 +90,12 @@ public class CrawlerOfEnties extends CrawlerBase{
 				writer.newLine();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			ExcepLogger.log(e);
 		} finally {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				ExcepLogger.log(e);
 			}
 		}
 	}

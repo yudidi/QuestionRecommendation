@@ -38,7 +38,6 @@ public class CrawlingSubjectTitle {
 			try {
 				insertRecord(record);
 			} catch (IOException e) {
-				e.printStackTrace();
 				log.info("Record插入失败");
 			}
 		}
