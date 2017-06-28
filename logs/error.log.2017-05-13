@@ -1,0 +1,17 @@
+2017-05-13 07:36:54  [ pool-1-thread-1:5676 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:36:59  [ pool-1-thread-1:10936 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:37:24  [ pool-2-thread-1:36073 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:37:28  [ http-nio-8080-exec-8:39983 ] - [ ERROR ]  定时任务超时,取消任务
+2017-05-13 07:37:32  [ pool-2-thread-1:43469 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:37:38  [ pool-2-thread-1:50211 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258/codeBooks?page=1
+2017-05-13 07:37:52  [ pool-2-thread-1:63972 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258/codeBooks?page=1
+2017-05-13 07:37:59  [ http-nio-8080-exec-7:70770 ] - [ ERROR ]  定时任务超时,取消任务
+2017-05-13 07:38:52  [ pool-1-thread-1:11928 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:38:57  [ pool-1-thread-1:17341 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:39:03  [ pool-1-thread-1:22750 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:39:12  [ pool-1-thread-1:31986 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:39:17  [ pool-1-thread-1:37436 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:39:20  [ http-nio-8080-exec-2:39982 ] - [ ERROR ]  定时任务超时,取消任务
+2017-05-13 07:39:23  [ pool-1-thread-1:42891 ] - [ ERROR ]  getPageContent failed : https://www.nowcoder.com/profile/3619258
+2017-05-13 07:41:15  [ http-nio-8080-exec-2:39984 ] - [ ERROR ]  定时任务超时,取消任务
+2017-05-13 07:44:21  [ http-nio-8080-exec-2:39980 ] - [ ERROR ]  定时任务超时,取消任务
