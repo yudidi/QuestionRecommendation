@@ -17,7 +17,7 @@ public class CrawlerConfig {
 	public final static String ENTRY = "https://www.nowcoder.com/activity/oj?title=&tags=&order=submissionCount&asc=false&page=${page}";
 	public final static int SUBJECT_TOTAL = 500;
 	public final static int TIME_OUT = 5000;//ms
-	public final static int CRAWLER_INTERVAL = 200;//ms
+	public final static int CRAWLER_INTERVAL = 400;//ms
 	public final static String COOKIES = "UM_distinctid=15b13eb707f9-0a1bbb8d2191468-1262694a-d7300-15b13eb7081143; CNZZDATA1253353781=1092614714-1490686423-https%253A%252F%252Fwww.nowcoder.com%252F%7C1493474935; from=cbl; from=cbl; NOWCODERUID=05E774D75F27475919D4DF0BF4C2B2D6; NOWCODERUID=05E774D75F27475919D4DF0BF4C2B2D6; NOWCODERCLINETID=E1765CACB6AA2C61F05427ACEF3516CC; NOWCODERCLINETID=E1765CACB6AA2C61F05427ACEF3516CC; SERVERID=9e4b74fdb43c9945205776603264d280|1493480032|1493479931; t=8E9FC50053BE2B715A47F54212D3EE02; t=8E9FC50053BE2B715A47F54212D3EE02";
 	public final static String questionTerminal_PREFIX = "https://www.nowcoder.com/questionTerminal/${questionID}";
 	// output of crawlers

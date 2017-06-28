@@ -32,6 +32,7 @@ public class CrawlerWithCookie extends CrawlerBase {
 			log.debug(String.format("Thread %d|Thread.interrupted() == %s",Thread.currentThread().getId(), Thread.currentThread().isInterrupted()));
 			try {
 				doc = method.equals("get") ? conn.get() : conn.post();
+				log.info(String.format("CrawlerWithCookie| doc == %s", doc));
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.debug("getPageContent失败");

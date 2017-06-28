@@ -79,6 +79,7 @@ public class CrawlerNoCookie extends CrawlerBase {
 			sleep();
 			try {
 				doc = method.equals("get") ? conn.get() : conn.post();
+				log.info(String.format("doc == %s", doc));
 			} catch (IOException e) {
 				log.error(String.format("getPageContent failed : %s",url));
 				e.printStackTrace();

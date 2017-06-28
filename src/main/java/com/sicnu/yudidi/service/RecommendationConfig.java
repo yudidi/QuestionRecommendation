@@ -7,7 +7,7 @@ public class RecommendationConfig {
 	/**
 	 * 推荐任务最大时长
 	 */
-	public final static int LIMIT_RECOMMENDATION_TASK_SECONDS = 40;
+	public final static int LIMIT_RECOMMENDATION_TASK_SECONDS = 120;
 	/**
 	 * 抓取的历史答题记录页数上限
 	 */
