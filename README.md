@@ -1,3 +1,5 @@
+
+
 # Programming Questions Recommendation System
 
 * This is my graduation design. 
@@ -7,6 +9,8 @@
 # Two Parts 
 # Part1: Crawler
 Use Cookie String to simulate logon. So you cannot see my username and password. HAHA! 
+
+To run the crawler, execute the `main` method in `com.sicnu.yudidi.kmedoids.dataset.CrawlerOfSubject`.
 
 # Part2: Recommendation Ideas
 ## K-Means
